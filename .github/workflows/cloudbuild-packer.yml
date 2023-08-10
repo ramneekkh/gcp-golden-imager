@@ -1,4 +1,4 @@
-# Copyright 2019 Google, LLC.
+# Copyright 2019 Google, LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ on:
   push:
     branches:
     - main
-    paths:
-      - packer/**
 
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
@@ -44,5 +42,5 @@ jobs:
       name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v0'
       with:
-         workload_identity_provider: 'projects/147656991168/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-         service_account: 'github@april-dispose.iam.gserviceaccount.com'
+         workload_identity_provider: 'projects/998851800110/locations/global/workloadIdentityPools/github-pool/providers/gke-gh-provider'
+         service_account: 'codebuild-gitflow@kcc-clean.iam.gserviceaccount.com'
