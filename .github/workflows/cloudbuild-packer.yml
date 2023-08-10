@@ -56,4 +56,11 @@ jobs:
              then
                 echo "Exiting Github task because GCP quota limit in given region is not sufficient."
                 exit 1
-             fi
+             fi#### Uploading prebaked docker image
+   
+    - run: git clone https://github.com/GoogleCloudPlatform/cloud-builders-community.git
+    - name: Upload packer-ansible prebaked docker image
+      run: |       
+          cd cloud-builders-community/packer
+          cp ../../packer/Dockerfile .
+          gcloud builds submit . --project=${{ secrets.RUN_PROJECT }}
