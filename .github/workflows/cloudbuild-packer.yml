@@ -1,4 +1,4 @@
-# Copyright 2019 Google, LLC
+# Copyright 2019 Google, LLC.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,17 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: GitHub Actions Cloudbuild Packer pipeline
+name: Build using Cloud Build
+
 on:
   push:
     branches:
     - main
     paths:
       - packer/**
-    
+
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
-  SERVICE_NAME: GoldenImager build and deploy workflow
+  SERVICE_NAME: KCC build and deploy workflow
 # Add "id-token" with the intended permissions.
 permissions:
   contents: 'read'
@@ -30,15 +31,14 @@ permissions:
   
 jobs:
   build:
-    name: Setup 
+    name: Setup and Build Helm Artifact
     environment: 
       name: dev
     runs-on: ubuntu-latest
 
-  steps:
+    steps:
     - name: Checkout
       uses: actions/checkout@v2
-    
     # Setup Google Auth 
     - id: 'auth'
       name: 'Authenticate to Google Cloud'
@@ -46,6 +46,3 @@ jobs:
       with:
          workload_identity_provider: 'projects/147656991168/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
          service_account: 'github@april-dispose.iam.gserviceaccount.com'
-
-
- 
