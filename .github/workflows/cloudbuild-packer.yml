@@ -21,26 +21,30 @@ on:
       - packer/**
     
 env:
-#project ID where you want to host your golden images and where cloudbuild will run, use Github secrerts
-  PROJECT_ID: ${{ secrets.RUN_PROJECT }}    
+  PROJECT_ID: ${{ secrets.RUN_PROJECT }}
+  SERVICE_NAME: GoldenImager build and deploy workflow
+# Add "id-token" with the intended permissions.
+permissions:
+  contents: 'read'
+  id-token: 'write'
+  
 jobs:
-  Explore-GitHub-Actions:
-  ## runs-on require github runners, please change this  value with the runners hosted in your organisation
-    runs-on: <github-runner-label>
+  build:
+    name: Setup 
+    environment: 
+      name: dev
+    runs-on: ubuntu-latest
+
     steps:
-
-
-      - name: Check out repository code
-        uses: actions/checkout@v2
-
-##### Setup gcloud CLI
-      - uses: google-github-actions/setup-gcloud@v0
-        with:
-          version: '286.0.0'
-          service_account_email: ${{ secrets.RUN_SA_EMAIL }}
-          service_account_key: ${{ secrets.RUN_SA_KEY }}
-          project_id: ${{ secrets.RUN_PROJECT }}
-
+    - name: Checkout
+      uses: actions/checkout@v2
+    # Setup Google Auth 
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v0'
+      with:
+         workload_identity_provider: 'projects/147656991168/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+         service_account: 'github@april-dispose.iam.gserviceaccount.com'
 
 
       - name: check quotas before proceeding
