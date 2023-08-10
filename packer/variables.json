@@ -1,8 +1,8 @@
 {
-      "project": "<project where you want to host your hardened images>",
-      "zone" : "<gcp-zone>",
+      "project": "april-dispose",
+      "zone" : "us-central-1a",
       "family": "cis-ubuntu-2004-image",
-      "region": "<gcp-region>",
-      "owner"  : "domain:<your gcp org domain>" 
+      "region": "us-central1",
+      "owner"  : "domain:ramneekkhurana.altostrat.com" 
 }
 
