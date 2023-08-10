@@ -76,11 +76,11 @@ jobs:
 ### Building packer image in a container and pushing it to GCP
 
     - name: Trigger Cloudbuild build for packer 
-        run: |  
+      run: |  
           cd packer
           gcloud builds submit . --project=${{ secrets.RUN_PROJECT }} 
 
-      - name: Image deprication job
+    - name: Image deprication job
         env:
           IMG: ${{steps.dep_image.outputs.dep_image}}
         run: | 
