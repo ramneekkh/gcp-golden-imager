@@ -1,6 +1,6 @@
 {
       "project": "april-dispose",
-      "zone" : "us-central-1a",
+      "zone" : "us-central1-a",
       "family": "cis-ubuntu-2004-image",
       "region": "us-central1",
       "owner"  : "domain:ramneekkhurana.altostrat.com" 
