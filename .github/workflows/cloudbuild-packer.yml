@@ -18,6 +18,8 @@ on:
   push:
     branches:
     - main
+    paths:
+      - packer/**
 
 env:
   PROJECT_ID: ${{ secrets.RUN_PROJECT }}
