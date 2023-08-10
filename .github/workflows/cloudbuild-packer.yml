@@ -46,3 +46,15 @@ jobs:
       with:
          workload_identity_provider: 'projects/147656991168/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
          service_account: 'github@april-dispose.iam.gserviceaccount.com'
+    
+    - name: check quotas before proceeding
+      run: |
+             REGION=$(jq .region packer/variables.json | tr -d '"')
+             LIMIT=$(gcloud compute regions describe $REGION --format="flattened(quotas[8].limit)" | tail -1 | awk '{print $2}' | cut -f1 -d".")
+             USAGE=$(gcloud compute regions describe $REGION --format="flattened(quotas[8].usage)" | tail -1 | awk '{print $2}' | cut -f1 -d".")
+             QUOTA=$(($LIMIT-$USAGE))
+             if [ $QUOTA -le 1 ]
+             then
+                echo "Exiting Github task because GCP quota limit in given region is not sufficient."
+                exit 1
+             fi
