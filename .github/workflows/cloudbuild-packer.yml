@@ -48,4 +48,55 @@ jobs:
          service_account: 'github@april-dispose.iam.gserviceaccount.com'
 
 
-  
+    - name: check quotas before proceeding
+      run: |
+             REGION=$(jq .region packer/variables.json | tr -d '"')
+             LIMIT=$(gcloud compute regions describe $REGION --format="flattened(quotas[8].limit)" | tail -1 | awk '{print $2}' | cut -f1 -d".")
+             USAGE=$(gcloud compute regions describe $REGION --format="flattened(quotas[8].usage)" | tail -1 | awk '{print $2}' | cut -f1 -d".")
+             QUOTA=$(($LIMIT-$USAGE))
+             if [ $QUOTA -le 1 ]
+             then
+                echo "Exiting Github task because GCP quota limit in given region is not sufficient."
+                exit 1
+             fi
+
+
+
+#### Uploading prebaked docker image
+    - run: git clone https://github.com/GoogleCloudPlatform/cloud-builders-community.git
+    - name: Upload packer-ansible prebaked docker image
+      run: |       
+          cd cloud-builders-community/packer
+          cp ../../packer/Dockerfile .
+          gcloud builds submit . --project=${{ secrets.RUN_PROJECT }}
+    
+
+    - name: Fetch image family 
+      run: |
+             FAM=$(jq .family packer/variables.json | tr -d '"')
+             echo $FAM
+             echo "::set-output name=dep_image::$(gcloud compute images list --format='value(NAME)' --sort-by='~creationTimestamp,family' --filter="$FAM" | head -1 | awk '{print $1}')"
+      id: dep_image    
+
+### Building packer image in a container and pushing it to GCP
+
+    - name: Trigger Cloudbuild build for packer 
+        run: |  
+          cd packer
+          gcloud builds submit . --project=${{ secrets.RUN_PROJECT }} 
+
+      - name: Image deprication job
+        env:
+          IMG: ${{steps.dep_image.outputs.dep_image}}
+        run: | 
+           if [ -z "$IMG" ]
+           then
+               echo "This is first build"
+           else    
+               gcloud compute images deprecate $IMG --state DEPRECATED && \
+               gcloud compute images add-labels $IMG --labels=deprecated_on="$(date +'%Y-%m-%d')"
+               echo "$IMG"       
+           fi
+
+### Job Status Notification          
+      - run: echo "This job's status is ${{ job.status }}."
