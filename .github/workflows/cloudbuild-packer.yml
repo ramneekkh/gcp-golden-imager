@@ -30,7 +30,7 @@ permissions:
   
 jobs:
   build:
-    name: Setup and Build Helm Artifact
+    name: Image creation Job
     environment: 
       name: dev
     runs-on: ubuntu-latest
