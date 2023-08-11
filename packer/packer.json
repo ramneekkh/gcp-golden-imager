@@ -15,6 +15,7 @@
       "zone": "{{user `zone`}}",
       "image_description": "custom cis hardened GCE machine Ubunutu 20.04 image",
       "image_family": "cis-ubuntu-2004-image",
+      "subnetwork": "april-dispose-us-central-1-01",
       "omit_external_ip": true,
       "use_internal_ip": true,
       "use_iap": true,
